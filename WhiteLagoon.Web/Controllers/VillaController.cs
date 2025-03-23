@@ -27,13 +27,13 @@ namespace WhiteLagoon.Web.Controllers
         [HttpPost]
         public IActionResult Create(Villa obj)
         {
-            if (ModelState.isValid)
+            if (ModelState.IsValid)
             {
                 _db.Villas.Add(obj);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(obj);
+            return View();
         }
     }
 }

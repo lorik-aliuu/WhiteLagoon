@@ -13,12 +13,11 @@ namespace WhiteLagoon.Infrastructure.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-       //table
-       public DbSet<Villa> Villas { get; set; }
+        public DbSet<Villa> Villas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+            //    base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Villa>().HasData(
                 new Villa
