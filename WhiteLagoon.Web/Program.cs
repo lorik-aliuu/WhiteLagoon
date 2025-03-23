@@ -5,8 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//db context
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
-option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+option.UseSqlServer(builder.Configuration.GetConnectionString("LorikConnection")));
 
 var app = builder.Build();
 
