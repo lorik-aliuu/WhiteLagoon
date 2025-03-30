@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WhiteLagoon.Application.Common.Interfaces;
 using WhiteLagoon.Application.Common.Utility;
+using WhiteLagoon.Web.ViewModels;
 
 namespace WhiteLagoon.Web.Controllers
 {
@@ -32,6 +33,41 @@ namespace WhiteLagoon.Web.Controllers
             var countByPreviousMonth = totalBookings.Count(u => u.BookingDate >= previousMonthStartDate &&
             u.BookingDate <= currentMonthStartDate);
 
+            return Json(GetRadialCartDataModel(totalBookings.Count(), countByCurrentMonth, countByPreviousMonth));
+        }
+
+        public async Task<IActionResult> GetRegisteredUserChartDataAsync()
+        {
+            var totalUsers = _unitOfWork.User.GetAll();
+
+            var countByCurrentMonth = totalUsers.Count(u => u.CreatedAt >= currentMonthStartDate &&
+            u.CreatedAt <= DateTime.Now);
+
+            var countByPreviousMonth = totalUsers.Count(u => u.CreatedAt >= previousMonthStartDate &&
+            u.CreatedAt <= currentMonthStartDate);
+
+           
+            return Json(GetRadialCartDataModel(totalUsers.Count(),countByCurrentMonth,countByPreviousMonth));
+        }
+
+        private static RadialBarChartVM GetRadialCartDataModel(int totalCount, double currentMonthCount, double prevMonthCount)
+        {
+            RadialBarChartVM radialBarChartVM = new();
+
+
+            int increaseDecreaseRatio = 100;
+
+            if (prevMonthCount != 0)
+            {
+                increaseDecreaseRatio = Convert.ToInt32((currentMonthCount - prevMonthCount) / prevMonthCount * 100);
+            }
+
+            radialBarChartVM.TotalCount = totalCount;
+            radialBarChartVM.CountInCurrentMonth = Convert.ToInt32(currentMonthCount);
+            radialBarChartVM.HasRatioIncreased = currentMonthCount > prevMonthCount;
+            radialBarChartVM.Series = new int[] { increaseDecreaseRatio };
+
+            return radialBarChartVM;    
         }
     }
 }
