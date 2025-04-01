@@ -36,7 +36,7 @@ namespace WhiteLagoon.Web.Controllers
             return Json(GetRadialCartDataModel(totalBookings.Count(), countByCurrentMonth, countByPreviousMonth));
         }
 
-        public async Task<IActionResult> GetRegisteredUserChartDataAsync()
+        public async Task<IActionResult> GetRegisteredUserChartData()
         {
             var totalUsers = _unitOfWork.User.GetAll();
 
@@ -49,6 +49,43 @@ namespace WhiteLagoon.Web.Controllers
            
             return Json(GetRadialCartDataModel(totalUsers.Count(),countByCurrentMonth,countByPreviousMonth));
         }
+
+        public async Task<IActionResult> GetRevenueChartData()
+        {
+            var totalBookings = _unitOfWork.Booking.GetAll(u => u.Status != SD.StatusPending
+           || u.Status == SD.StatusCancelled);
+
+            var totalRevenue = Convert.ToInt32(totalBookings.Sum(u => u.TotalCost));
+
+            var countByCurrentMonth = totalBookings.Where(u => u.BookingDate >= currentMonthStartDate &&
+            u.BookingDate <= DateTime.Now).Sum(u=>u.TotalCost);
+
+            var countByPreviousMonth = totalBookings.Where(u => u.BookingDate >= previousMonthStartDate &&
+            u.BookingDate <= currentMonthStartDate).Sum(u => u.TotalCost);
+
+            return Json(GetRadialCartDataModel(totalRevenue, countByCurrentMonth, countByPreviousMonth));
+        }
+
+        public async Task<IActionResult> GetBookingPieChartData()
+        {
+            var totalBookings = _unitOfWork.Booking.GetAll(u => u.BookingDate >= DateTime.Now.AddDays(-30) &&
+            (u.Status != SD.StatusPending || u.Status == SD.StatusCancelled));
+
+            var customerWithOneBooking = totalBookings.GroupBy(b=>b.UserId).Where(x=>x.Count()==1).Select(x=>x.Key).ToList(); 
+
+            int bookingsByNewCustomer = customerWithOneBooking.Count();
+            int bookingsByReturningCustomer = totalBookings.Count() - bookingsByNewCustomer;
+
+            PieChartVM pieChartVM = new()
+            {
+                Labels = new string[] { "New Customer Bookings", "Returning Customer Bookings" },
+                Series = new decimal[] { bookingsByNewCustomer, bookingsByReturningCustomer }
+            };
+
+            return Json(pieChartVM);
+        }
+
+
 
         private static RadialBarChartVM GetRadialCartDataModel(int totalCount, double currentMonthCount, double prevMonthCount)
         {
