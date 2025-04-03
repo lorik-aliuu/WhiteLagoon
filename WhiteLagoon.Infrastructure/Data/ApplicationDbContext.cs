@@ -30,7 +30,7 @@ namespace WhiteLagoon.Infrastructure.Data
                     Id = 1,
                     Name = "Royal Villa",
                     Description = "Fusce 11 tincidunt maximus leo, sed scelerisque massa auctor sit amet. Donec ex mauris, hendrerit quis nibh ac, efficitur fringilla enim.",
-                    ImageUrl = "https://placehold.co/600x400",
+                    ImageUrl = "https://t4.ftcdn.net/jpg/03/70/64/43/360_F_370644357_MDF4UXLAXTyyi2OyuK66tWW9cA2f8svL.jpg2",
                     Occupancy = 4,
                     Price = 200,
                     Sqft = 550,
